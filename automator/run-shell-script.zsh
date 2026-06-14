@@ -10,16 +10,16 @@ if [[ ! -x "$CLI" ]]; then
 fi
 
 output="$("$CLI" "$@" 2>&1)"
-status=$?
+exit_code=$?
 
 printf '%s\n' "$output"
 
-if (( status == 0 )); then
+if (( exit_code == 0 )); then
   /usr/bin/osascript \
     -e 'display notification "テキストファイルを保存し、クリップボードへコピーしました。" with title "画像OCR"'
 else
   /usr/bin/osascript \
-    -e 'display notification "文字起こしに失敗しました。Automatorの実行結果を確認してください。" with title "画像OCR"'
+    -e 'display alert "画像OCRに失敗しました" message "'"${output//\"/\\\"}"'"'
 fi
 
-exit "$status"
+exit "$exit_code"
